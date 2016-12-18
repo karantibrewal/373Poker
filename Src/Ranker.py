@@ -364,19 +364,19 @@ for val in Values:
 			assert Ranker.isStraightFlush(testHand)
 
 hand = [Card(Suits[0], '10'), Card(Suits[0], 'J'), 
-							Card(Suits[0], 'Q'), Card(Suits[0], 'K'), 
-							Card(Suits[0], 'A')]
+		Card(Suits[0], 'Q'), Card(Suits[0], 'K'), 
+		Card(Suits[0], 'A')]
 assert Ranker.isRoyalFlush(hand)
 
 hand = [Card(Suits[1], '10'), Card(Suits[1], 'J'), 
-							Card(Suits[1], 'Q'), Card(Suits[1], 'K'), 
-							Card(Suits[1], 'A')]
+		Card(Suits[1], 'Q'), Card(Suits[1], 'K'), 
+		Card(Suits[1], 'A')]
 assert Ranker.isRoyalFlush(hand)
   
   
 hand = [Card(Suits[1], '10'), Card(Suits[2], 'J'), 
-							Card(Suits[2], 'Q'), Card(Suits[2], 'K'), 
-							Card(Suits[2], 'A')]
+		Card(Suits[2], 'Q'), Card(Suits[2], 'K'), 
+		Card(Suits[2], 'A')]
 assert not Ranker.isRoyalFlush(hand)
 
 
