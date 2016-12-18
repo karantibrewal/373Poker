@@ -10,6 +10,38 @@ from Cards import Card
 from random import shuffle
 from random import randrange
 
+valMapping = {}
+valMapping['A'] = 1 
+valMapping['2'] = 2 
+valMapping['3'] = 3 
+valMapping['4'] = 4 
+valMapping['5'] = 5 
+valMapping['6'] = 6 
+valMapping['7'] = 7 
+valMapping['8'] = 8 
+valMapping['9'] = 9 
+valMapping['10'] = 10 
+valMapping['J'] = 11
+valMapping['Q'] = 12 
+valMapping['K'] = 13
+
+cardMapping = {}
+cardMapping[1] = 'A' 
+cardMapping[2] = '2' 
+cardMapping[3] = '3' 
+cardMapping[4] = '4' 
+cardMapping[5] = '5' 
+cardMapping[6] = '6' 
+cardMapping[7] = '7' 
+cardMapping[8] = '8' 
+cardMapping[9] = '9' 
+cardMapping[10] = '10' 
+cardMapping[11] = 'J' 
+cardMapping[12] = 'Q' 
+cardMapping[13] = 'K' 
+cardMapping[14] = 'A' 
+
+
 class Result(): 
 	win = 1
 	tie = 0
@@ -17,12 +49,20 @@ class Result():
 
 class Ranker: 
 
-	# # @return true if and only if hand represents a royal flush
-	# def isRoyalFlush(hand): 
+	# @return true if and only if hand represents a royal flush
+	@staticmethod
+	def isRoyalFlush(hand): 
+		for suit in Suits: 
+			if Card(suit, '10') in hand and Card(suit, 'J') in hand \
+			and Card(suit, 'Q') in hand and Card(suit, 'K') in hand \
+			and Card(suit, 'A') in hand: 
+				return True
+		return False
 
-	# # @return true if and only if hand represents a straight flush
-	# def isStraightFlush(hand): 
-	# 	return isStraight(hand) and isFlush(hand)
+	# @return true if and only if hand represents a straight flush
+	@staticmethod
+	def isStraightFlush(hand): 
+		return Ranker.isStraight(hand) and Ranker.isFlush(hand)
 
 	# @return true if and only if hand represents a four of a kind
 	@staticmethod
@@ -71,8 +111,33 @@ class Ranker:
 
 		return count >= 1
 
-	# # @return true if and only if hand represents a straight
-	# def isStraight(hand): 
+	# @return true if and only if hand represents a straight
+	@staticmethod
+	def isStraight(hand): 
+		assert len(hand) == 7
+		vals = [card.val for card in hand]
+		# explicitly check for '10,J,Q,K,A'
+		if '10' in vals and 'J' in vals and 'Q' in vals and 'K' in vals \
+			and 'A' in vals: 
+			return True
+		vals = [valMapping[x] for x in vals]
+		vals.sort()
+		countIncreasing = 1
+		for i in range(6):
+			if vals[i] + 1 == vals[i+1]: 
+				countIncreasing += 1
+			elif vals[i] == vals[i+1]:
+				countIncreasing += 0
+			else:
+				countIncreasing = 1
+			if countIncreasing >= 5:
+				return True
+
+		return countIncreasing >= 5
+
+
+
+
 
 	# @return true if and only if hand represents a three of a kind
 	@staticmethod
@@ -253,8 +318,66 @@ for suit in Suits:
 			assert Ranker.isFlush(testHand)
 
 
-			  
+for val in Values: 
+	if val in ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
+		suit = Suits[0] 
+		num = valMapping[val]
+		testHand = []
+		testHand = [
+					Card(suit, val), Card(suit, cardMapping[num + 1]), 
+					Card(suit, cardMapping[num + 2]), Card(suit, cardMapping[num + 3]),
+					Card(suit, cardMapping[num + 4])
+			       ]
+		testDeck = Deck()
+		for card in testHand: 
+			testDeck.get(card)
 
+		testDeck.shuffleDeck() 
+		testHand.append(testDeck.getFirstCard())
+		testHand.append(testDeck.getFirstCard())
+
+		for _ in range(20): 
+			shuffle(testHand)
+			assert Ranker.isStraight(testHand)
+
+
+for val in Values: 
+	if val in ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
+		suit = Suits[0] 
+		num = valMapping[val]
+		testHand = []
+		testHand = [
+					Card(suit, val), Card(suit, cardMapping[num + 1]), 
+					Card(suit, cardMapping[num + 2]), Card(suit, cardMapping[num + 3]),
+					Card(suit, cardMapping[num + 4])
+			       ]
+		testDeck = Deck()
+		for card in testHand: 
+			testDeck.get(card)
+
+		testDeck.shuffleDeck() 
+		testHand.append(testDeck.getFirstCard())
+		testHand.append(testDeck.getFirstCard())
+
+		for _ in range(20): 
+			shuffle(testHand)
+			assert Ranker.isStraightFlush(testHand)
+
+hand = [Card(Suits[0], '10'), Card(Suits[0], 'J'), 
+							Card(Suits[0], 'Q'), Card(Suits[0], 'K'), 
+							Card(Suits[0], 'A')]
+assert Ranker.isRoyalFlush(hand)
+
+hand = [Card(Suits[1], '10'), Card(Suits[1], 'J'), 
+							Card(Suits[1], 'Q'), Card(Suits[1], 'K'), 
+							Card(Suits[1], 'A')]
+assert Ranker.isRoyalFlush(hand)
+  
+  
+hand = [Card(Suits[1], '10'), Card(Suits[2], 'J'), 
+							Card(Suits[2], 'Q'), Card(Suits[2], 'K'), 
+							Card(Suits[2], 'A')]
+assert not Ranker.isRoyalFlush(hand)
 
 
 
