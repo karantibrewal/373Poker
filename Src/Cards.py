@@ -112,18 +112,3 @@ assert testDeck.get(secondCard) is None
 thirdCard = testDeck.get(Card('Clubs', 'A'))
 assert thirdCard == Card('Clubs', 'A')
 assert len(testDeck.deck) == 49
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
