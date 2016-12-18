@@ -20,6 +20,7 @@ class Card:
 	# @param suit suit of this card 
 	# @param val val of this card
 	def __init__(self, suit, val):
+
 		# Pre: suit, val are valid
 		assert suit in Suits
 		assert val in Values
