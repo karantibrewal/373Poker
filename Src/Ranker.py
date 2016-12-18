@@ -237,10 +237,10 @@ for suit in Suits:
 		testHand = [] 
 		for _ in range(5):
 			card = testDeck.get(Card(suit, \
-									Values[randrange(0, len(Values), 1)]))
+						Values[randrange(0, len(Values), 1)]))
 			while card is None: 
 				card = testDeck.get(Card(suit, \
-									Values[randrange(0, len(Values), 1)]))
+						Values[randrange(0, len(Values), 1)]))
 			testHand.append(card)
 
 		testDeck.shuffleDeck() 
