@@ -10,6 +10,8 @@ from Cards import Card
 from random import shuffle
 from random import randrange
 import itertools
+import collections
+
 
 valMapping = {}
 valMapping['A'] = 1 
@@ -273,78 +275,301 @@ class Ranker:
 		else:
 			return -1
 
+	# @Pre Hand1, Hand2 are 4 of a kind
+	# @return 1 if handA > handB
+	# 			0 if handA = handB
+	#          -1 if handA < handB 
+	@staticmethod
+	def higherFourOfAKind(handA, handB): 
+		## All combos of handA
+		handACombos = itertools.combinations(handA, 5)
+		max4A = 0
 
-	# # @ return 1 if handA > handB
-	# # 		 0 if handA = handB
-	# #          -1 if handA < handB 
-	# @staticmethod
-	# def rank(handA, handB): 
-	# 	# ROYAL FLUSH? 
-	# 	if Ranker.isRoyalFlush(handA) and Ranker.isRoyalFlush(handB):
-	# 		return 0
-	# 	elif Ranker.isRoyalFlush(handA):
-	# 		return 1
-	# 	elif Ranker.isRoyalFlush(handB):
-	# 		return -1
-	# 	# STRAIGHT FLUSH? 
-	# 	elif Ranker.isStraightFlush(handA) and Ranker.isStraightFlush(handB):
-	# 		return Ranker.higherStraightFlush(handA, handB)
-	# 	elif Ranker.isStraightFlush(handA):
-	# 		return 1
-	# 	elif Ranker.isStraightFlush(handB):
-	# 		return -1
-	# 	# FOUR OF A KIND?
-	# 	elif Ranker.isFourOfAKind(handA) and Ranker.isFourOfAKind(handB):
-	# 		return Ranker.higherFourOfAKind(handA, handB)
-	# 	elif Ranker.isFourOfAKind(handA):
-	# 		return 1
-	# 	elif Ranker.isFourOfAKind(handB):
-	# 		return -1
-	# 	# FULL HOUSE? 
-	# 	elif Ranker.isFullHouse(handA) and Ranker.isFullHouse(handB):
-	# 		return Ranker.higherFullHouse(handA, handB)
-	# 	elif Ranker.isFullHouse(handA):
-	# 		return 1
-	# 	elif Ranker.isFullHouse(handB):
-	# 		return -1
-	# 	# FLUSH? 
-	# 	elif Ranker.isFlush(handA) and Ranker.isFlush(handB):
-	# 		return Ranker.higherFlush(handA, handB)
-	# 	elif Ranker.isFlush(handA):
-	# 		return 1
-	# 	elif Ranker.isFlush(handB):
-	# 		return -1
-	# 	# STRAIGHT? 
-	# 	elif Ranker.isStraight(handA) and Ranker.isStraight(handB):
-	# 		return Ranker.higherStraight(handA, handB)
-	# 	elif Ranker.isStraight(handA):
-	# 		return 1
-	# 	elif Ranker.isStraight(handB):
-	# 		return -1
-	# 	# THREE OF A KIND?
-	# 	elif Ranker.isThreeOfAKind(handA) and Ranker.isThreeOfAKind(handB):
-	# 		return Ranker.higherStraight(handA, handB)
-	# 	elif Ranker.isThreeOfAKind(handA):
-	# 		return 1
-	# 	elif Ranker.isThreeOfAKind(handB):
-	# 		return -1
-	# 	# TWO PAIRS?
-	# 	elif Ranker.isTwoPairs(handA) and Ranker.isTwoPairs(handB):
-	# 		return Ranker.higherTwoPairs(handA, handB)
-	# 	elif Ranker.isTwoPairs(handA):
-	# 		return 1
-	# 	elif Ranker.isTwoPairs(handB):
-	# 		return -1
-	# 	# PAIR?
-	# 	elif Ranker.isPair(handA) and Ranker.isPair(handB):
-	# 		return Ranker.higherPair(handA, handB)
-	# 	elif Ranker.isPair(handA):
-	# 		return 1
-	# 	elif Ranker.isPair(handB):
-	# 		return -1
-	# 	# HIGH CARD?
-	# 	else:
-	# 		return Ranker.higherHighCard(handA, handB)
+		for hand in handACombos:
+			if Ranker.isFourOfAKind(hand): 
+				freq = collections.Counter([card.val for card in hand])
+				for key in freq: 
+					if freq[key] == 4:
+			   			max4A = max(max4A, \
+			   				valMapping[key] if valMapping[key] != 1 else 14)
+			   		else:
+			   			kickerA = valMapping[key] if valMapping[key] != 1 else 14
+			   
+		handBCombos = itertools.combinations(handB, 5)
+		max4B = 0
+		for hand in handBCombos:
+			if Ranker.isFullHouse(hand): 
+				freq = collections.Counter([card.val for card in hand])
+				for key in freq: 
+					if freq[key] == 4:
+			   			max4B = max(max4B, \
+			   				valMapping[key] if valMapping[key] != 1 else 14)
+			   		else:
+			   			kickerB = valMapping[key] if valMapping[key] != 1 else 14
+
+		if max4A > max4B:
+			return 1
+		elif max4A < max4B:
+			return -1
+		elif kickerA > kickerB:
+			return 1
+		elif kickerB < kickerA:
+			return -1
+		else:
+			return 0
+
+	# @Pre Hand1, Hand2 are 3 of a kind
+	# @return 1 if handA > handB
+	# 			0 if handA = handB
+	#          -1 if handA < handB 
+	@staticmethod
+	def higherThreeOfAKind(handA, handB): 
+		## All combos of handA
+		handACombos = itertools.combinations(handA, 5)
+		max4A = 0
+
+		for hand in handACombos:
+			if Ranker.isFourOfAKind(hand): 
+				freq = collections.Counter([card.val for card in hand])
+				for key in freq: 
+					if freq[key] == 3:
+			   			max4A = max(max4A, \
+			   				valMapping[key] if valMapping[key] != 1 else 14)
+			   		else:
+			   			kickerA = valMapping[key] if valMapping[key] != 1 else 14
+			   
+		handBCombos = itertools.combinations(handB, 5)
+		max4B = 0
+		for hand in handBCombos:
+			if Ranker.isFullHouse(hand): 
+				freq = collections.Counter([card.val for card in hand])
+				for key in freq: 
+					if freq[key] == 3:
+			   			max4B = max(max4B, \
+			   				valMapping[key] if valMapping[key] != 1 else 14)
+			   		else:
+			   			kickerB = valMapping[key] if valMapping[key] != 1 else 14
+
+		if max4A > max4B:
+			return 1
+		elif max4A < max4B:
+			return -1
+		elif kickerA > kickerB:
+			return 1
+		elif kickerB < kickerA:
+			return -1
+		else:
+			return 0
+
+
+
+
+	# @Pre Hand1, Hand2 are full house
+	# @return 1 if handA > handB
+	# 			0 if handA = handB
+	#          -1 if handA < handB 
+	@staticmethod
+	def higherFullHouse(handA, handB): 
+		## All combos of handA
+		handACombos = itertools.combinations(handA, 5)
+		max3A = 0
+		max2A = 0
+		for hand in handACombos:
+			if Ranker.isFullHouse(hand): 
+				freq = collections.Counter([card.val for card in hand])
+				for key in freq: 
+					if freq[key] == 3:
+						this3 = key
+					else:
+			   			this2 = key
+			   	max3A = max(max3A, valMapping[this3] if valMapping[this3] != 1 else 14)
+			   	max2A = max(max2A, valMapping[this2] if valMapping[this2] != 1 else 14)
+		handBCombos = itertools.combinations(handB, 5)
+		max3B = 0
+		max2B = 0
+		for hand in handBCombos:
+			if Ranker.isFullHouse(hand): 
+				freq = collections.Counter([card.val for card in hand])
+				for key in freq: 
+					if freq[key] == 3:
+						this3 = key
+					else:
+			   			this2 = key
+			   	max3B = max(max3B, valMapping[this3] if valMapping[this3] != 1 else 14)
+			   	max2B = max(max2B, valMapping[this2] if valMapping[this2] != 1 else 14)
+
+		if max3A > max3B:
+			return 1
+		elif max3A < max3B:
+			return -1
+		elif max2A > max2B:
+			return 1
+		elif max2A < max2B:
+			return -1
+		else: 
+			return 0
+
+
+
+		## All combos of handB 
+		handBCombos = itertools.combinations(handB, 5)
+		maxB = 2
+		for hand in handBCombos:
+			if Ranker.isFlush(hand): 
+				if 'A' in [x.val for x in hand]: 
+			   		maxB = 14 
+			   	maxB = max(maxB, max([valMapping[x.val] for x in hand]))
+
+	
+		if maxA == maxB: 
+			return 0
+		elif maxA > maxB:
+			return 1
+		else:
+			return -1
+
+
+	# @Pre Hand1, Hand2 are just high cards
+	# @return 1 if handA > handB
+	# 			0 if handA = handB
+	#          -1 if handA < handB 
+	@staticmethod
+	def higherHighCard(handA, handB):
+		assert len(handA) == len(handB) 
+		valsA = [valMapping[x.val] if valMapping[x.val] != 1 else 14 for x in handA]
+		valsB = [valMapping[x.val] if valMapping[x.val] != 1 else 14 for x in handB]
+		valsA.sort(reverse = True)
+		valsB.sort(reverse = True)
+
+		for i in range(5): 
+			if valsA[i] > valsB[i]:
+				return 1
+			elif valsA[i] < valsB[i]:
+				return -1
+		return 0
+
+		
+	# @Pre Hand1, Hand2 have pairs
+	# @return 1 if handA > handB
+	# 			0 if handA = handB
+	#          -1 if handA < handB 
+	@staticmethod
+	def higherPairs(handA, handB): 
+		pairsA = []
+		kickerA = 0
+		freq = collections.Counter([card.val for card in handA])
+		for key in freq: 
+			if freq[key] == 2:
+			   			pairsA.append(valMapping[key] if valMapping[key] != 1 else 14)
+			else:
+	   			kickerA = max(kickerA, \
+		   				valMapping[key] if valMapping[key] != 1 else 14)
+		pairsB = []
+		kickerB = 0
+		freq = collections.Counter([card.val for card in handB])
+		for key in freq: 
+			if freq[key] == 2:
+			   			pairsB.append(valMapping[key] if valMapping[key] != 1 else 14)
+	   		else:
+	  	  		kickerB = max(kickerB, \
+			   				valMapping[key] if valMapping[key] != 1 else 14)
+		pairsA.sort(reverse = True)
+		pairsB.sort(reverse = True)
+
+		if len(pairsA) >= 2 and len(pairsB) == 1:
+			return 1
+		elif len(pairsA) == 1 and len(pairsB) >= 2:
+			return -1
+
+		for i in range(min(len(pairsA), 2)): 
+			if pairsA[i] > pairsB[i]:
+				return 1
+			elif pairsA[i] < pairsB[i]:
+				return -1
+
+		if kickerA > kickerB:
+			return 1
+		elif kickerA < kickerB:
+			return -1
+		else:
+			return 0
+
+
+
+
+
+
+	# @ return 1 if handA > handB
+	# 		 0 if handA = handB
+	#          -1 if handA < handB 
+	@staticmethod
+	def rank(handA, handB): 
+		# ROYAL FLUSH? 
+		if Ranker.isRoyalFlush(handA) and Ranker.isRoyalFlush(handB):
+			return 0
+		elif Ranker.isRoyalFlush(handA):
+			return 1
+		elif Ranker.isRoyalFlush(handB):
+			return -1
+		# STRAIGHT FLUSH? 
+		elif Ranker.isStraightFlush(handA) and Ranker.isStraightFlush(handB):
+			return Ranker.higherStraightFlush(handA, handB)
+		elif Ranker.isStraightFlush(handA):
+			return 1
+		elif Ranker.isStraightFlush(handB):
+			return -1
+		# FOUR OF A KIND?
+		elif Ranker.isFourOfAKind(handA) and Ranker.isFourOfAKind(handB):
+			return Ranker.higherFourOfAKind(handA, handB)
+		elif Ranker.isFourOfAKind(handA):
+			return 1
+		elif Ranker.isFourOfAKind(handB):
+			return -1
+		# FULL HOUSE? 
+		elif Ranker.isFullHouse(handA) and Ranker.isFullHouse(handB):
+			return Ranker.higherFullHouse(handA, handB)
+		elif Ranker.isFullHouse(handA):
+			return 1
+		elif Ranker.isFullHouse(handB):
+			return -1
+		# FLUSH? 
+		elif Ranker.isFlush(handA) and Ranker.isFlush(handB):
+			return Ranker.higherFlush(handA, handB)
+		elif Ranker.isFlush(handA):
+			return 1
+		elif Ranker.isFlush(handB):
+			return -1
+		# STRAIGHT? 
+		elif Ranker.isStraight(handA) and Ranker.isStraight(handB):
+			return Ranker.higherStraight(handA, handB)
+		elif Ranker.isStraight(handA):
+			return 1
+		elif Ranker.isStraight(handB):
+			return -1
+		# THREE OF A KIND?
+		elif Ranker.isThreeOfAKind(handA) and Ranker.isThreeOfAKind(handB):
+			return Ranker.higherStraight(handA, handB)
+		elif Ranker.isThreeOfAKind(handA):
+			return 1
+		elif Ranker.isThreeOfAKind(handB):
+			return -1
+		# TWO PAIRS?
+		elif Ranker.isTwoPairs(handA) and Ranker.isTwoPairs(handB):
+			return Ranker.higherPairs(handA, handB)
+		elif Ranker.isTwoPairs(handA):
+			return 1
+		elif Ranker.isTwoPairs(handB):
+			return -1
+		# PAIR?
+		elif Ranker.isPair(handA) and Ranker.isPair(handB):
+			return Ranker.higherPairs(handA, handB)
+		elif Ranker.isPair(handA):
+			return 1
+		elif Ranker.isPair(handB):
+			return -1
+		# HIGH CARD?
+		else:
+			return Ranker.higherHighCard(handA, handB)
 
 
 
@@ -615,6 +840,37 @@ for val in Values:
 			shuffle(testHand2)
 			assert Ranker.higherStraight(testHand1, testHand2) >= 0
 
+# Test for higher high card
+for _ in range(10000):
+	deck1 = Deck()
+	deck1.shuffleDeck()
+	handA = []
+	maxA = 0
+	for _ in range(5):
+		card = deck1.getFirstCard()
+		val = valMapping[card.val] if valMapping[card.val] != 1 else 14
+		maxA = max(maxA, val)
+		handA.append(card)
+
+	deck2 = Deck()
+	deck2.shuffleDeck()
+	handB = []
+	maxB = 0
+	for _ in range(5):
+		card = deck2.getFirstCard()
+		val = valMapping[card.val] if valMapping[card.val] != 1 else 14
+		maxB = max(maxB, val)
+		handB.append(card)
+
+	if maxB == maxA:
+		result = Ranker.higherHighCard(handA, handB)
+	elif maxA > maxB:
+		result = 1
+	else:
+		result = -1
+	assert result == Ranker.higherHighCard(handA, handB)
+
+	
 
 
 ## Test for higherFlush
@@ -684,7 +940,79 @@ for suit in Suits:
 			shuffle(testHand2)
 			assert Ranker.higherFlush(testHand1, testHand2) == result
 
+## Test for higher full house
+for val in Values:
+	testDeck = Deck()
+	testHandA = [] 
+	testHandA.append(testDeck.get(Card(Suits[0], val)))
+	testHandA.append(testDeck.get(Card(Suits[1], val)))
+	max2A = valMapping[val] if valMapping[val] != 1 else 14
+	x = randrange(0, len(Values), 1)
+	while Values[x] == val:
+			x = randrange(0, len(Values), 1)
+	testHandA.append(testDeck.get(Card(Suits[0], Values[x])))
+	testHandA.append(testDeck.get(Card(Suits[1], Values[x])))
+	testHandA.append(testDeck.get(Card(Suits[2], Values[x])))
+	max3A = valMapping[Values[x]] if valMapping[Values[x]] != 1 else 14
 
+	testDeck = Deck()
+	testHandB = [] 
+	testHandB.append(testDeck.get(Card(Suits[0], val)))
+	testHandB.append(testDeck.get(Card(Suits[1], val)))
+	max2B = valMapping[val] if valMapping[val] != 1 else 14
+	x = randrange(0, len(Values), 1)
+	while Values[x] == val:
+			x = randrange(0, len(Values), 1)
+	testHandB.append(testDeck.get(Card(Suits[0], Values[x])))
+	testHandB.append(testDeck.get(Card(Suits[1], Values[x])))
+	testHandB.append(testDeck.get(Card(Suits[2], Values[x])))
+	max3B = valMapping[Values[x]] if valMapping[Values[x]] != 1 else 14
+	
+	if max3A > max3B:
+		result = 1
+	elif max3A < max3B:
+		result = -1
+	else: 
+		result = Ranker.higherFullHouse(testHandA, testHandB)
+
+	assert result == Ranker.higherFullHouse(testHandA, testHandB)
+
+
+# Test for higher four of a kind
+## Test for four of a kind
+for _ in range(1000):
+	valsA = valMapping[Values[randrange(0, len(Values))]]
+	valsB = valMapping[Values[randrange(0, len(Values))]]
+	valsA = 14 if valsA == 1 else valsA
+	valsB = 14 if valsB == 1 else valsB
+	if valsA == valsB:
+		valsB = (13 + valsB) % 14 if (13 + valsB) % 14 != 1 else 4
+	if valsA < valsB: 
+		valsA, valsB = valsB, valsA
+	
+	testDeck = Deck()
+	testHandA = [] 
+	for suit in Suits: 
+		testHandA.append(testDeck.get(Card(suit, cardMapping[valsA])))
+	testDeck.shuffleDeck() 
+	testHandA.append(testDeck.getFirstCard())
+	testHandA.append(testDeck.getFirstCard())
+	testHandA.append(testDeck.getFirstCard())
+	
+	testDeck = Deck()
+	testHandB = [] 
+	for suit in Suits: 
+		testHandB.append(testDeck.get(Card(suit, cardMapping[valsB])))
+	testDeck.shuffleDeck() 
+	testHandB.append(testDeck.getFirstCard())
+	testHandB.append(testDeck.getFirstCard())
+	testHandB.append(testDeck.getFirstCard())
+	assert Ranker.higherFourOfAKind(testHandA, testHandB) == 1
+
+
+
+
+	
 
 
 
