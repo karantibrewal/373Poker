@@ -2,6 +2,13 @@
 
 import csv
 
+
+### Class to represent one dictionary event
+### That is the transition model for a given state
+### @param win probability of winning
+### @param loss probability of losing
+### @param fold probability of folding
+### @param tie probability of tieing
 class Probility: 
 
 	def __init__(self, win, tie, loss, fold):
@@ -10,6 +17,9 @@ class Probility:
 		self.loss = loss
 		self.fold = fold
 
+		
+### Function to load transition model from memory
+### @param filename file to load from
 def loadTransitionModel(filename): 
 	file = open(filename, 'rb')
 	reader = csv.reader(file)
@@ -45,7 +55,10 @@ class Player:
 		self.riskAversion = riskAversion
 		self.transitionModel = loadTransitionModel('transitionmodel.csv')
 
-
+	# FUNCTION TO MAP STATE TO ACTION
+	# STATE INFORMATION: @param K1, K2 capital structure
+	#		     @param A1, A2 antes
+	#		     @param card1, card2 player's cards
 	# @return 1 if JAM, -1 if FOLD
 	def action(self, K1, K2, A1, A2, card1, card2): 
 		card1val = card1.val
